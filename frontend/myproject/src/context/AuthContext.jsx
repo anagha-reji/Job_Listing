@@ -29,17 +29,16 @@ export function AuthProvider({ children }) {
   //   persist(data.user)  // and store data.token separately
   // --------------------------------------------------------------------
 async function login(email, password) {
-  const { data } = await axios.post(
-    'http://localhost:5000/api/users/login',
-    {
-      email,
-      password,
-    }
-  )
-
-  persist(data)
-
-  return data
+  try {
+    const { data } = await axios.post(
+      'http://localhost:5000/api/users/login',
+      { email, password }
+    )
+    persist(data)
+    return data
+  } catch (err) {
+    throw new Error(err.response?.data?.message || 'Login failed. Please try again.')
+  }
 }
 
   // --------------------------------------------------------------------
@@ -48,18 +47,21 @@ async function login(email, password) {
   //   persist(data.user)
   // --------------------------------------------------------------------
   async function register({ name, email, password, role }) {
-  const { data } = await axios.post(
-    'http://localhost:5000/api/users/register',
-    {
-      name,
-      email,
-      password,
-      role: role === 'candidate' ? 'jobseeker' : 'employer',
-    }
-  )
-
-  persist(data)
-  return data
+  try {
+    const { data } = await axios.post(
+      'http://localhost:5000/api/users/register',
+      {
+        name,
+        email,
+        password,
+        role: role === 'candidate' ? 'jobseeker' : 'employer',
+      }
+    )
+    persist(data)
+    return data
+  } catch (err) {
+    throw new Error(err.response?.data?.message || 'Registration failed. Please try again.')
+  }
 }
 
   function logout() {
